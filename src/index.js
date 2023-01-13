@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('.search-form input');
@@ -53,6 +55,8 @@ async function axiosRequest(page = 1) {
 
     dataArray = res.data.hits;
     totalCount = res.data.totalHits;
+
+    return res;
   } catch (err) {
     console.log(err);
   }
@@ -83,35 +87,53 @@ function createImageCard() {
         comments,
         downloads,
       }) =>
-        `<div class="photo-card" style="display: flex; flex-direction: column; align-items: center; border: 1px solid #363636; width: 370px">
-      <img src="${webformatURL}" alt="${tags}" loading="lazy" data-large="${largeImageURL}" width="100%" height="250px" />
-      <div class="info" style="display: flex; gap: 30px">
-        <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
-          <b>Likes</b>
-          <span>${likes}</span>
-        </p>
-        <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
-          <b>Views</b>
-          <span>${views}</span>
-        </p>
-        <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
-          <b>Comments</b>
-          <span>${comments}</span>
-        </p>
-        <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
-          <b>Downloads</b>
-          <span>${downloads}</span>
-        </p>
-      </div>
-    </div>`
+        `<a class="gallery__item" href="${largeImageURL}" style="text-decoration: none; color: black">
+          <div class="photo-card" style="display: flex; flex-direction: column; align-items: center; border: 1px solid #363636; width: 370px">
+            <img src="${webformatURL}" alt="${tags}" loading="lazy" width="100%" height="250px" />
+            <div class="info" style="display: flex; gap: 30px">
+              <p class="info-item" style="display: flex; flex-direction: column; align-items: center;">
+                <b>Likes</b>
+                <span>${likes}</span>
+              </p>
+              <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
+                <b>Views</b>
+                <span>${views}</span>
+              </p>
+              <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
+                <b>Comments</b>
+                <span>${comments}</span>
+              </p>
+              <p class="info-item" style="display: flex; flex-direction: column; align-items: center">
+                <b>Downloads</b>
+                <span>${downloads}</span>
+              </p>
+            </div>
+          </div>
+        </a>`
     )
     .join('');
 
   gallery.insertAdjacentHTML('beforeend', cards);
+
+  initLightbox();
 }
 
 function onLoad() {
   page++;
+
   axiosRequest(page);
   createImageCard();
+  console.log(dataArray.length);
+
+  if (dataArray.length < 40) {
+    loadMore.style.display = 'none';
+  }
+}
+
+function initLightbox() {
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+  });
+
+  lightbox.refresh();
 }
