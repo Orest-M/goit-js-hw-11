@@ -55,7 +55,7 @@ async function axiosRequest(page = 1) {
 
     createImageCard(res.data.hits);
 
-    if (dataArray.length < 40) {
+    if (res.data.hits.length < 40) {
       loadMore.style.display = 'none';
     }
 
