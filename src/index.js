@@ -76,6 +76,7 @@ function callNotiflix(status) {
 
 function createImageCard() {
   console.log(dataArray);
+
   const cards = dataArray
     .map(
       ({
@@ -119,11 +120,10 @@ function createImageCard() {
 }
 
 function onLoad() {
-  page++;
+  page += 1;
 
   axiosRequest(page);
   createImageCard();
-  console.log(dataArray.length);
 
   if (dataArray.length < 40) {
     loadMore.style.display = 'none';
