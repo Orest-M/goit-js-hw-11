@@ -11,7 +11,6 @@ const loadMore = document.querySelector('.load-more');
 const URL = 'https://pixabay.com/api';
 const KEY = '32821640-07af0db556e394f2b39c0c0e4';
 
-let dataArray = null;
 let totalCount = null;
 let page = 1;
 
@@ -37,7 +36,6 @@ async function onSubmit(evt) {
     }
 
     callNotiflix('success');
-    createImageCard();
 
     if (totalCount > 40) {
       loadMore.style.display = 'block';
@@ -53,8 +51,13 @@ async function axiosRequest(page = 1) {
       `${URL}/?key=${KEY}&q=${input.value.trim()}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`
     );
 
-    dataArray = res.data.hits;
     totalCount = res.data.totalHits;
+
+    createImageCard(res.data.hits);
+
+    if (dataArray.length < 40) {
+      loadMore.style.display = 'none';
+    }
 
     return res;
   } catch (err) {
@@ -74,9 +77,7 @@ function callNotiflix(status) {
   }
 }
 
-function createImageCard() {
-  console.log(dataArray);
-
+function createImageCard(dataArray) {
   const cards = dataArray
     .map(
       ({
@@ -116,24 +117,14 @@ function createImageCard() {
 
   gallery.insertAdjacentHTML('beforeend', cards);
 
-  initLightbox();
+  lightbox.refresh();
 }
 
 function onLoad() {
   page += 1;
-
   axiosRequest(page);
-  createImageCard();
-
-  if (dataArray.length < 40) {
-    loadMore.style.display = 'none';
-  }
 }
 
-function initLightbox() {
-  const lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-  });
-
-  lightbox.refresh();
-}
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+});
