@@ -137,5 +137,3 @@ function initLightbox() {
 
   lightbox.refresh();
 }
-
-//
